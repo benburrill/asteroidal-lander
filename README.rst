@@ -3,7 +3,7 @@ Asteroidal Lander
 A game inspired by `Lunar Lander`_, but with Newtonian gravity and my
 best attempt at rigid-body physics.
 
-You can play the game `here <https://benburrill.github.io/asteroidal-lander/>`__
+You can play the game `here <https://benburrill.github.io/asteroidal-lander>`__.
 
 Wait, how do I play?
 --------------------
@@ -14,9 +14,20 @@ Wait, how do I play?
 
 WASD can be used in place of the arrow keys if desired.
 
-Your goal is to land on the magenta-colored areas of the asteroid.  Keep
-an eye on your fuel level and try not to crash.  This isn't some dinky
-little landing module, it's a massive colony ship!
+Your goal is to land on the magenta-colored areas of the asteroid.  You
+can see them all on the map in the bottom right of the screen.  The map
+also shows your position relative to the asteroid as a blue icon.
+
+The main display shows your ship, and will automatically zoom as you get
+closer/farther from the asteroid.  The camera is fixed to the ship, and
+will rotate as you move around the asteroid so that the asteroid always
+appears at the bottom of the screen.  A velocity indicator appears next
+to the ship, showing the direction of your velocity.  Pointing the ship
+opposite to the velocity and firing the main engine will allow you to
+cancel out the oribital velocity and land.
+
+Good luck, keep an eye on your fuel level, and try not to crash.  This
+isn't some dinky little landing module, it's a massive colony ship!
 
 Development
 -----------
