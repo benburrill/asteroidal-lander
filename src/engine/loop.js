@@ -38,13 +38,13 @@ export class GameLoop {
     adjustDimensions() {
         var resized = false;
 
-        if (canvas.width !== canvas.clientWidth) {
-            canvas.width = canvas.clientWidth;
+        if (this.canvas.width !== this.canvas.clientWidth) {
+            this.canvas.width = this.canvas.clientWidth;
             resized = true;
         }
 
-        if (canvas.height !== canvas.clientHeight) {
-            canvas.height = canvas.clientHeight;
+        if (this.canvas.height !== this.canvas.clientHeight) {
+            this.canvas.height = this.canvas.clientHeight;
             resized = true;
         }
 

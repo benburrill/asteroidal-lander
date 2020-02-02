@@ -1,18 +1,3 @@
-document.title = "Asteroidal Lander";
-
-var canvas = document.createElement("canvas");
-window.canvas = canvas;
-canvas.style.width = "640px";
-canvas.style.height = "480px";
-document.body.appendChild(canvas);
-
-var fsbut = document.createElement("button");
-fsbut.innerText = "Fullscreen";
-document.body.appendChild(fsbut).addEventListener("click", function() {
-    canvas.requestFullscreen();
-})
-
-
 import { background, createImage } from "./engine/ctxlib.js";
 import { Vec2, Transform } from "./engine/vmath.js";
 import { rtripolycol } from "./engine/collision.js";
@@ -413,34 +398,38 @@ class AsteroidalLander extends Scene {
     }
 }
 
-new GameLoop(canvas).start(
-    new Game(canvas, {
-        bg: "#000",
-        fg: "#DDD",
-        fontFace: "monospace"
-    }),
+window.addEventListener("load", function(e) {
+    var canvas = document.getElementById("asteroidal-lander");
 
-    new LoadGlobalResources({
-        cityShipData: getJSON("city-ship.json"),
-        // A delay for testing out the loading scene
-        // delay: new Promise(resolve => setTimeout(resolve, 5000)),
-        hatching: createImage([100, 100], function(ctx) {
-            background(ctx, "rgb(10,10,10)");
-            // ctx.strokeStyle = "#777";
-            // ctx.strokeStyle = "#997";
-            ctx.strokeStyle = "#554";
-            ctx.lineCap = "square";
-            ctx.scale(2, 2);
+    new GameLoop(canvas).start(
+        new Game(canvas, {
+            bg: "#000",
+            fg: "#DDD",
+            fontFace: "monospace"
+        }),
 
-            ctx.beginPath();
-                ctx.moveTo(0, 0); ctx.lineTo(50, 50);
-                ctx.moveTo(25, 0); ctx.lineTo(50, 25);
-                ctx.moveTo(0, 25); ctx.lineTo(25, 50);
+        new LoadGlobalResources({
+            cityShipData: getJSON("city-ship.json"),
+            // A delay for testing out the loading scene
+            // delay: new Promise(resolve => setTimeout(resolve, 5000)),
+            hatching: createImage([100, 100], function(ctx) {
+                background(ctx, "rgb(10,10,10)");
+                // ctx.strokeStyle = "#777";
+                // ctx.strokeStyle = "#997";
+                ctx.strokeStyle = "#554";
+                ctx.lineCap = "square";
+                ctx.scale(2, 2);
 
-                // The corner bits (only necessary at the 2x scale)
-                ctx.moveTo(-1, 49); ctx.lineTo(1, 51);
-                ctx.moveTo(49, -1); ctx.lineTo(51, 1);
-            ctx.stroke();
-        })
-    }, new AsteroidalLander)
-);
+                ctx.beginPath();
+                    ctx.moveTo(0, 0); ctx.lineTo(50, 50);
+                    ctx.moveTo(25, 0); ctx.lineTo(50, 25);
+                    ctx.moveTo(0, 25); ctx.lineTo(25, 50);
+
+                    // The corner bits (only necessary at the 2x scale)
+                    ctx.moveTo(-1, 49); ctx.lineTo(1, 51);
+                    ctx.moveTo(49, -1); ctx.lineTo(51, 1);
+                ctx.stroke();
+            })
+        }, new AsteroidalLander)
+    );
+})
