@@ -28,8 +28,9 @@ to the ship, showing the direction of your velocity.  Pointing the ship
 opposite to the velocity and firing the main engine will allow you to
 cancel out the orbital velocity and land.
 
-Good luck, keep an eye on your fuel level, and try not to crash.  This
-isn't some dinky little landing module, it's a massive colony ship!
+Good luck, keep an eye on your fuel level (upper left), and try not to
+crash.  This isn't some dinky little landing module, it's a massive
+colony ship!
 
 Development
 -----------
