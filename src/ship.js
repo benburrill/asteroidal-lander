@@ -129,6 +129,9 @@ export class Ship extends PhysicsObject {
         this.throttle = 0;
         this.fuel = 1;
         this.fmul = 1/(opt && opt.fuel || 1);
+
+        this.thrustTorque = 3e-7;
+        this.thrustForce = 4e-5;
     }
 
     getBounds() {
@@ -213,13 +216,13 @@ export class Ship extends PhysicsObject {
 
         this._updateTurnExhaustL(actions.turnLeft? 1 : 0);
         if (actions.turnLeft) {
-            this.omega -= 3e-7 * dt;
+            this.omega -= this.thrustTorque * dt;
             this.fuel -= 5e-6 * this.fmul * dt;
         }
 
         this._updateTurnExhaustR(actions.turnRight? 1 : 0);
         if (actions.turnRight) {
-            this.omega += 3e-7 * dt;
+            this.omega += this.thrustTorque * dt;
             this.fuel -= 5e-6 * this.fmul * dt;
         }
 
@@ -228,7 +231,7 @@ export class Ship extends PhysicsObject {
         if (actions.thrustForward) {
             this.throttle += dt * 1e-3;
             this.throttle = Math.min(this.throttle, 1);
-            var thrustMag = this.throttle * 4e-5 * dt;
+            var thrustMag = this.throttle * this.thrustForce * dt;
             this.vel.iadd(Vec2.fromPolar(thrustMag, this.theta));
             // Extra fuel is wasted early in the engine startup.  This
             // is to further incentivize judicious use of the throttle,
@@ -269,6 +272,28 @@ export class Ship extends PhysicsObject {
     }
 
     getAltitude(asteroid) {
+        // I've gotten it into my head (without any actual evidence)
+        // that this method is needlessly inefficient, so here are some
+        // possible optimization options I'll probably never implement:
+        // * The `down` unit vector should usually be approximately the
+        //   same for all points.  Could just calculate it once for CoM.
+        // * Rather than calculating angle every time, might actually be
+        //   faster to move `idx` around until the relevant line segment
+        //   is found (can just check line intersection, which we're
+        //   basically doing already, so fast when current line segment
+        //   is already the right one)
+        // * Caching -- if `getBounds` is cached and we can ensure the
+        //   asteroid hasn't moved, then additionally caching the
+        //   altitude should be fine.  And ignoring the moving asteroid
+        //   problem probably isn't a huge deal since the cache should
+        //   end up being reset every frame when the ship moves anyway.
+        //   Of course, caching is only helpful if I use this multiple
+        //   times per frame, which I currently don't but I think maybe
+        //   I will want to at some point...
+        //
+        // Or, y'know, I could just not care because (again) this thing
+        // is currently only called once per frame...
+
         return mapMinMax(this.getBounds(), function(point) {
             var idx = asteroid.indexForAngle(asteroid.angleFor(point));
             var a = asteroid.getPoint(idx);

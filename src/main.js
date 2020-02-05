@@ -173,8 +173,10 @@ class AsteroidalLander extends Scene {
         var keyRt = this.game.keys.$KeyD || this.game.keys.ArrowRight;
 
         this.ship.update(dt, {
-            turnLeft: keyLe || (keyDn && this.ship.omega > 2e-6),
-            turnRight: keyRt || (keyDn && this.ship.omega < -2e-6),
+            turnLeft: keyLe || (keyDn &&
+                this.ship.omega >= this.ship.thrustTorque * dt),
+            turnRight: keyRt || (keyDn &&
+                this.ship.omega <= -this.ship.thrustTorque * dt),
             thrustForward: keyUp
             // increaseThrust: this.game.keys.ArrowUp,
             // decreaseThrust: this.game.keys.ArrowDown
