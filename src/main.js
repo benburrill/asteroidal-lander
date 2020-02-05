@@ -117,8 +117,8 @@ class AsteroidalLander extends Scene {
             vel: new Vec2(Math.sqrt(this.asteroid.grav / rShip), 0),
             theta: Math.random() * 2 * Math.PI,
             crest: 0.3,
-            sfric: 0.8,
-            dfric: 0.6,
+            sfric: 0.9,
+            dfric: 0.7,
 
             // A bit extra fuel for exploration
             fuel: 1.5
@@ -243,7 +243,7 @@ class AsteroidalLander extends Scene {
             var forward = Vec2.fromPolar(1, this.ship.theta);
             this.stable = (
                 forward.dot(avgNorm) > 0.99 &&
-                speed < 0.0002 && Math.abs(this.ship.omega) < 5e-7
+                speed < 0.0002 && Math.abs(this.ship.omega) < 6e-7
             );
 
             if (cool && this.stable) {
