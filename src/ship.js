@@ -1,5 +1,6 @@
 import { Vec2, Transform } from "./engine/vmath.js";
 import { MultiShape } from "./shape.js";
+import { mapMinMax } from "./utils.js";
 
 export function speedColor(val, half) {
     var mag = Math.abs(val);
@@ -265,6 +266,18 @@ export class Ship extends PhysicsObject {
         }
 
         return frags;
+    }
+
+    getAltitude(asteroid) {
+        return mapMinMax(this.getBounds(), function(point) {
+            var idx = asteroid.indexForAngle(asteroid.angleFor(point));
+            var a = asteroid.getPoint(idx);
+            var b = asteroid.getPoint(idx + 1);
+
+            var edge = b.sub(a);
+            var down = asteroid.pos.sub(point).unit();
+            return a.sub(point).cross(edge) / down.cross(edge);
+        }).minKey;
     }
 }
 

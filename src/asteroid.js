@@ -147,14 +147,20 @@ export class Asteroid {
     }
 
     getSlice(obj) {
+        // Return low and high index bounds for an object near by the
+        // asteroid.  The bounds may be the same index.
         var dist = obj.pos.sub(this.pos).mag();
-        var angle = Math.atan2(obj.pos.y, obj.pos.x);
+        var angle = this.angleFor(obj.pos);
         var angularRadius = Math.atan(obj.shape.radius / dist);
 
         return [
             this.indexForAngle(angle - angularRadius),
             this.indexForAngle(angle + angularRadius)
         ]
+    }
+
+    angleFor(pos) {
+        return Math.atan2(pos.y - this.pos.y, pos.x - this.pos.x);
     }
 
     indexForAngle(angle) {

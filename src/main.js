@@ -150,7 +150,6 @@ class AsteroidalLander extends Scene {
             return new AsteroidalLander;
         }
 
-        // if (this.frames % 5 !== 0) return;
         if (this.game.keys.R || dt >= this.maxDt) {
             this.framesSinceMaxDt = 0;
             this.maxDt = dt;
@@ -257,10 +256,7 @@ class AsteroidalLander extends Scene {
     draw(ctx, unfocused) {
         var cam = this.cam;
         cam.view = this.game.minDim / this.ship.shape.radius / 2;
-        cam.rotation = -Math.atan2(
-            this.ship.pos.y - this.asteroid.pos.y,
-            this.ship.pos.x - this.asteroid.pos.x
-        ) - Math.PI / 2;
+        cam.rotation = -this.asteroid.angleFor(this.ship.pos) - Math.PI / 2;
 
         background(ctx, "#000");
 
@@ -308,18 +304,22 @@ class AsteroidalLander extends Scene {
         ctx.font = "15px monospace";
         ctx.textAlign = "start";
 
+        ctx.textAlign = "end";
+
+        ctx.fillStyle = "#4DF";
+        ctx.fillText("Altitude: " + toMetric(
+            this.ship.getAltitude(this.asteroid) * 0.6,
+            "m", 3, 0.01
+        ), this.game.width - 5, 5, this.game.width / 2 - 10);
+
         var vmag = this.ship.vel.mag();
         ctx.fillStyle = speedColor(vmag, 0.05);
-        ctx.textAlign = "end";
         ctx.fillText(
             ((vmag > Math.sqrt(2 * this.asteroid.grav / this.ship.pos.mag()))?
                 "(ESC)" : ""
             ) + " Velocity: " + toMetric(vmag * 600, "m/s", 3, 0.01),
-            this.game.width - 5, 5, this.game.width / 2 - 10
+            this.game.width - 5, 25, this.game.width / 2 - 10
         );
-
-        ctx.fillStyle = speedColor(this.ship.omega, 0.0003);
-        ctx.fillText("Rotation: " + toMetric(this.ship.omega * 1000 / Math.PI / 2, "Hz", 3), this.game.width - 5, 25, this.game.width / 2 - 10);
 
         ctx.fillStyle = "#888";
         ctx.textAlign = "center";
