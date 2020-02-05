@@ -14,6 +14,24 @@
                 height: 100vh;
             }
         </style>
+
+        <script>
+            var ignoreErrors = false;
+            window.addEventListener("error", function(event) {
+                if (ignoreErrors == null) {
+                    ignoreErrors = !!window["budo-livereload"];
+                }
+
+                if (ignoreErrors) return false;
+                ignoreErrors = true;
+
+                alert("There was an error!  See browser console for " +
+                      "details.  If you think this is a bug, please " +
+                      "report to https://github.com/benburrill/" +
+                      "asteroidal-lander/issues");
+                return false;
+            });
+        </script>
     </head>
     <body>
         <canvas id=asteroidal-lander>No canvas support :(</canvas>
