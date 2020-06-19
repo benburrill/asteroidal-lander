@@ -1,6 +1,6 @@
 {
     "name": "asteroidal-lander",
-    "version": "0.1.2",
+    "version": "0.1.3",
     "author": "Ben Burrill",
     "description": "A game inspired by \"Lunar Lander\" with Newtonian gravity",
     "keywords": [
