@@ -16,9 +16,9 @@
         </style>
 
         <script>
-            var ignoreErrors = false;
+            var ignoreErrors = null;
             window.addEventListener("error", function(event) {
-                if (ignoreErrors == null) {
+                if (ignoreErrors === null) {
                     ignoreErrors = !!window["budo-livereload"];
                 }
 
@@ -27,7 +27,7 @@
 
                 alert("There was an error!  See browser console for " +
                       "details.  If you think this is a bug, please " +
-                      "report to https://github.com/benburrill/" +
+                      "report to\nhttps://github.com/benburrill/" +
                       "asteroidal-lander/issues");
                 return false;
             });

@@ -112,7 +112,9 @@ export class PhysicsObject {
 
         ctx.lineWidth = cam.scale < 1? 1 / cam.scale : 1;
         ctx.strokeStyle = "#FFF";
+        ctx.fillStyle = "#000";
 
+        this.shape.fill(ctx);
         this.shape.draw(ctx);
         ctx.restore();
     }

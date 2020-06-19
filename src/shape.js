@@ -26,6 +26,7 @@ class PointShape {
     }
 
     draw(ctx) { }
+    fill(ctx) { }
 }
 
 export class Dots extends PointShape {
@@ -71,6 +72,11 @@ export class Polygon extends Polyline {
     trace(ctx) {
         super.trace(ctx);
         ctx.closePath();
+    }
+
+    fill(ctx) {
+        this.trace(ctx);
+        ctx.fill();
     }
 
     static rect(x, y, w, h) {
@@ -148,7 +154,14 @@ export class MultiShape {
 
         // @bounds is a special region all shapes must have
         if (!this.region.bounds) {
-            throw new ReferenceError("Shape has no @bounds region");
+            // The @inside region (essentially a stronger version of
+            // @bounds) can be used as a fallback for @bounds if it
+            // doesn't exist though.
+            if (this.region.inside) {
+                this.region.bounds = this.region.inside;
+            } else {
+                throw new ReferenceError("Shape has no @bounds region");
+            }
         }
 
         this.radius = this.region.bounds.radius;
@@ -157,6 +170,16 @@ export class MultiShape {
     draw(ctx) {
         for (var key in this.shapes) {
             this.shapes[key].draw(ctx);
+        }
+    }
+
+    fill(ctx) {
+        if (this.region.inside) {
+            this.region.inside.fill(ctx);
+        } else {
+            for (var key in this.shapes) {
+                this.shapes[key].fill(ctx);
+            }
         }
     }
 }

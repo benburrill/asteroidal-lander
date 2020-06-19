@@ -88,3 +88,40 @@ export function toMetric(val, unit, sig, prec) {
     unit = PREFIXES[8 + Math.floor(ppow / 3)] + unit;
     return `${num} ${unit}`;
 }
+
+
+
+export class Queue {
+    constructor() {
+        this.head = null;
+        this.tail = null;
+    }
+
+    static from(iterable) {
+        var queue = new Queue();
+        for (var item of iterable) {
+            queue.enqueue(item);
+        }
+
+        return queue;
+    }
+
+    get empty() {
+        return this.head === null;
+    }
+
+    enqueue(item) {
+        var node = {item: item, next: null};
+        if (this.head === null) this.head = node;
+        if (this.tail !== null) this.tail.next = node;
+        this.tail = node;
+    }
+
+    dequeue() {
+        if (this.head === null) return null;
+
+        var item = this.head.item;
+        this.head = this.head.next;
+        return item;
+    }
+}

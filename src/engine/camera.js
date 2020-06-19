@@ -1,4 +1,4 @@
-import { Vec2 } from "./vmath.js";
+import { Vec2, Transform } from "./vmath.js";
 
 // TODO: Maybe Camera should be more smarter about canvas size.  That's
 // part of what this.view is for, but you need to set it manually.
@@ -10,6 +10,16 @@ export class Camera {
         this.view = 1;
         this._za = null;
         this.rotation = rotation || 0;
+    }
+
+    copy(includeAnimState) {
+        var copy = new Camera(this.focus, this.zoom, this.rotation);
+        copy.view = this.view;
+        if (includeAnimState) {
+            copy._target = this._target;
+            copy._za = this._za;
+        }
+        return copy;
     }
 
     get scale() {
@@ -27,7 +37,7 @@ export class Camera {
     update(dt) {
         // TODO: chase the target rather than being locked on.
         // Or at least have that be an option
-        this.focus.set(...this._target.pos);
+        if (this._target) this.focus.set(...this._target.pos);
 
         // TODO: rotate, focus transitions (focus should unset target)
         if (this._za) {
@@ -50,5 +60,14 @@ export class Camera {
         ctx.scale(this.scale, this.scale);
         ctx.rotate(this.rotation);
         ctx.translate(-this.focus.x, -this.focus.y);
+    }
+
+    getTransform() {
+        this.update(0);  // Apply instantaneous transitions
+        var trf = new Transform();
+        trf.scale(this.scale, this.scale);
+        trf.rotate(this.rotation);
+        trf.translate(-this.focus.x, -this.focus.y);
+        return trf;
     }
 }

@@ -12,6 +12,7 @@ import { MultiShape, Polygon } from "./shape.js";
 import { Asteroid } from "./asteroid.js";
 import { Ship, Fragment, speedColor } from "./ship.js";
 import { toMetric, mapMinMax } from "./utils.js";
+import { StarField } from "./starfield.js";
 
 
 class GameOverScene extends Scene {
@@ -41,6 +42,7 @@ class GameOverScene extends Scene {
 class ExplosionScene extends Scene {
     inherit(parentScene) {
         this.asteroid = parentScene.asteroid;
+        this.starField = parentScene.starField;
         this.cam = parentScene.cam;
     }
 
@@ -88,12 +90,16 @@ class ExplosionScene extends Scene {
     draw(ctx) {
         background(ctx, "#000");
 
+        ctx.save();
         ctx.translate(this.game.width/2, this.game.height/2);
+        this.starField.draw(ctx, this.cam, this.game.width, this.game.height);
+
         this.cam.applyTransform(ctx);
 
         for (var frag of this.fragments) frag.draw(ctx, this.cam);
 
         this.asteroid.draw(ctx, this.cam);
+        ctx.restore();
     }
 }
 
@@ -106,9 +112,15 @@ class ExplosionScene extends Scene {
 class AsteroidalLander extends Scene {
     init() {
         this.frames = 0;
+        this.dtRecord = new Array(60);
+        for (var i = 0; i < this.dtRecord.length; i++)
+            this.dtRecord[i] = 0;
+        this.debug = false;
 
         this.asteroid = new Asteroid(5000, 200, this.game.rc.hatching);
         // this.asteroid.grav = 0;
+
+        this.starField = new StarField(this.game.rc.star);
 
         var rShip = this.asteroid.maxRadius + 400;
 
@@ -123,9 +135,6 @@ class AsteroidalLander extends Scene {
             // A bit extra fuel for exploration
             fuel: 1.5
         });
-
-        this.maxDt = 0;
-        this.framesSinceMaxDt = 0;
 
         this.cam = new Camera;
         this.cam.follow(this.ship);
@@ -145,18 +154,13 @@ class AsteroidalLander extends Scene {
 
     update(dt) {
         this.frames++;
+        this.dtRecord[this.frames % this.dtRecord.length] = dt;
 
         if (this.game.keys.R && this.ship.fuel <= 0) {
             return new AsteroidalLander;
         }
 
-        if (this.game.keys.R || dt >= this.maxDt) {
-            this.framesSinceMaxDt = 0;
-            this.maxDt = dt;
-            console.log("hit max of ", dt, "frame:", this.frames);
-        } else {
-            this.framesSinceMaxDt++;
-        }
+        if (this.game.keys["!"]) this.debug = true;
 
         if (this.game.keys.Spacebar) dt *= 10;
         this.cam.update(dt);
@@ -264,6 +268,7 @@ class AsteroidalLander extends Scene {
 
         ctx.save();
             ctx.translate(this.game.width / 2, this.game.height / 2);
+            this.starField.draw(ctx, cam, this.game.width, this.game.height);
             cam.applyTransform(ctx);
 
             this.ship.draw(ctx, cam);
@@ -288,26 +293,16 @@ class AsteroidalLander extends Scene {
             );
         }
 
+        ctx.font = "15px monospace";
+        ctx.textBaseline = "top";
+
         if (this.ship.fuel <= 0) {
-            ctx.font = "15px monospace";
-            ctx.textBaseline = "top";
             ctx.textAlign = "start";
             ctx.fillStyle = "#FFF";
             ctx.fillText("Press [R] to restart", 5, 45, this.game.width / 2 - 10);
         }
 
-        if (this.framesSinceMaxDt < 30) {
-            ctx.fillStyle = "#FE4";
-        } else {
-            ctx.fillStyle = "#FFF";
-        }
-
-        ctx.textBaseline = "top";
-        ctx.font = "15px monospace";
-        ctx.textAlign = "start";
-
         ctx.textAlign = "end";
-
         ctx.fillStyle = "#4DF";
         ctx.fillText("Altitude: " + toMetric(
             this.ship.getAltitude(this.asteroid) * 0.6,
@@ -323,8 +318,17 @@ class AsteroidalLander extends Scene {
             this.game.width - 5, 25, this.game.width / 2 - 10
         );
 
-        ctx.fillStyle = "#888";
-        ctx.textAlign = "center";
+        if (this.debug) {
+            ctx.textBaseline = "bottom";
+            ctx.textAlign = "start";
+            ctx.fillStyle = "#FFF";
+            var totTime = this.dtRecord.reduce((sum, cur) => sum + cur);
+            var totFrames = Math.min(this.frames, this.dtRecord.length);
+            ctx.fillText(
+                (totFrames * 1000 / totTime).toFixed(1) + " FPS",
+                5, this.game.height - 5
+            );
+        }
 
         // Minimap, TODO: move this code somewhere else.
         ctx.save();
@@ -431,6 +435,19 @@ window.addEventListener("load", function(e) {
                     ctx.moveTo(-1, 49); ctx.lineTo(1, 51);
                     ctx.moveTo(49, -1); ctx.lineTo(51, 1);
                 ctx.stroke();
+            }),
+
+            star: createImage([100, 100], function(ctx) {
+                var grad = ctx.createRadialGradient(50, 50, 10, 50, 50, 50);
+                grad.addColorStop(0, "rgb(180, 180, 255)");
+                grad.addColorStop(0.3, "rgba(200, 150, 255, 0.3)");
+                grad.addColorStop(0.6, "rgba(220, 100, 200, 0.1)");
+                grad.addColorStop(1, "rgba(255, 50, 150, 0)");
+
+                ctx.beginPath();
+                ctx.arc(50, 50, 50, 0, 2 * Math.PI);
+                ctx.fillStyle = grad;
+                ctx.fill();
             })
         }, new AsteroidalLander)
     );

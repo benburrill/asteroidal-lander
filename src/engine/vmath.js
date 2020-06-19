@@ -21,6 +21,9 @@ export class Vec2 {
         this.y = y || 0;
     }
 
+    // TODO: I've seen Vec2.from show up from time to time in profiling,
+    // and I think it's just because it's hard for on the JIT.  Might be
+    // better to split it up into fromObject and fromIterable.
     static from(obj) {
         if ("x" in obj && "y" in obj) {
             return new this(obj.x, obj.y);
