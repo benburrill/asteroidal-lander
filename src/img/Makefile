@@ -5,7 +5,7 @@ favicon-%.png:
 
 favicon.ico: $(FAVICONS)
 	icotool -c -o "$@" $^
-	rm -rf $^
+	rm $^
 
 install: favicon.ico
 	mv -f "$<" "../../static/$<"
