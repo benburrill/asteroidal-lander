@@ -422,10 +422,10 @@ window.addEventListener("load", function(e) {
                 background(ctx, "rgb(10,10,10)");
                 // ctx.strokeStyle = "#777";
                 // ctx.strokeStyle = "#997";
-                ctx.strokeStyle = "#554";
                 ctx.lineCap = "square";
                 ctx.scale(2, 2);
 
+                ctx.strokeStyle = "#554";
                 ctx.beginPath();
                     ctx.moveTo(0, 0); ctx.lineTo(50, 50);
                     ctx.moveTo(25, 0); ctx.lineTo(50, 25);
@@ -434,6 +434,12 @@ window.addEventListener("load", function(e) {
                     // The corner bits (only necessary at the 2x scale)
                     ctx.moveTo(-1, 49); ctx.lineTo(1, 51);
                     ctx.moveTo(49, -1); ctx.lineTo(51, 1);
+                ctx.stroke();
+
+                ctx.strokeStyle = "rgba(152, 134, 110, 0.2)";
+                ctx.beginPath();
+                    ctx.moveTo(0, 50); ctx.lineTo(50, 25);
+                    ctx.moveTo(50, 0); ctx.lineTo(0, 25);
                 ctx.stroke();
             }),
 
